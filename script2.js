@@ -23,6 +23,7 @@ const createUser = (user) => {
     fragment.append(userName, hiddenInfo);
     fragment.style.border = '1px solid';
     fragment.style.padding = '10px';
+    fragment.style.margin = '5px';
     fragment.setAttribute('data-id', user.id);
     fragment.classList.add('js-target-user')
     return fragment;
