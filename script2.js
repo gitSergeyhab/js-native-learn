@@ -1,10 +1,15 @@
+// ЗАДАНИЕ
+// со страницы   url   вывести на страницу все юзернеймы,
+// при клике на юзернейм вывести всю инфу
+
 const url = 'https://jsonplaceholder.typicode.com/users';
 
+// созание кнопки для загрузки юзернеймов
 const users = document.createElement('button');
 users.textContent = 'USERS';
 document.body.append(users)
 
-
+// создание одной записи с юзернеймом
 const createUser = (user) => {
     const fragment = document.createElement('div');
     const userName = document.createElement('h2');
@@ -19,26 +24,35 @@ const createUser = (user) => {
     return fragment;
 };
 
-const keyValueToPar = (key, value) => `${key}:   ${value}`
+
 
 const getInfoThisUser = (hiddenInfoBlock, id) => {
     const xhr = new XMLHttpRequest();
     xhr.open('get', `${url}/${id}`);
     xhr.addEventListener('load', () => {
         const moreInfo = JSON.parse(xhr.responseText);
-        let text = document.createDocumentFragment();
-        console.log(moreInfo);
-        for (let inf of Object.keys(moreInfo)) {
-            if(typeof moreInfo[inf] === 'object') {
-                const newDict = moreInfo[inf];
-                for (let newInf of Object.keys(newDict)) {
-                    text += keyValueToPar(newInf, newDict[newInf]);
+        let frag = document.createDocumentFragment();
+
+        // добавление во фраг параграфа 
+        const keyValueToPar = (key, value) => `${key}:   ${value}`
+        const paragAppend = (frag, key, value) => {
+            const parag = document.createElement('p');
+            parag.textContent = keyValueToPar(key, value);
+            frag.append(parag);
+        };
+
+        const fragmentAppend = (frag, obj) => {
+            for (let inf of Object.keys(obj)) {
+                if(typeof obj[inf] === 'object') {
+                    fragmentAppend(frag, obj[inf]);
+                } else {
+                    paragAppend(frag, inf, obj[inf]);
                 }
-            } else {
-                text += keyValueToPar(inf, moreInfo[inf]);
             }
         }
-        hiddenInfoBlock.textContent = text;
+
+        fragmentAppend(frag, moreInfo);
+        hiddenInfoBlock.append(frag);
     });
     xhr.send();
     
@@ -51,21 +65,16 @@ const getMoreInfo = (evt) => {
         const hiddenInfo = targetUser.querySelector('p');
         hiddenInfo.style.display = 'block';
         getInfoThisUser(hiddenInfo, id);
-        // hiddenInfo.textContent = 'hiddenInfo';
-        // hiddenInfo.textContent = 'hiddenInfo';
-         
-
     } 
 };
-
 
 const createFragment = (users) => {
     const fragment = document.createElement('div');
     users.forEach(user => {
-        fragment.append(createUser(user))
+        fragment.append(createUser(user));
     })
     document.body.append(fragment);
-    fragment.addEventListener('click', getMoreInfo)
+    fragment.addEventListener('click', getMoreInfo);
 }
 
 const xhr = new XMLHttpRequest();
@@ -78,15 +87,3 @@ users.addEventListener('click', () => {
     })
     xhr.send();
 })
-
-// document.body.append(createUser({username: 'Sergik', id: 333}))
-// console.log(createUser({username: 'Sergik', id: 333}));
-
-// xhr.open('get', `${url}/1`);
-// users.addEventListener('click', () => {
-//     xhr.addEventListener('load', () => {
-//         const text = xhr.responseText;
-//         console.log(text)
-//     })
-//     xhr.send();
-// })
