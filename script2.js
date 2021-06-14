@@ -62,13 +62,7 @@ const getInfoThisUser = (hiddenInfoBlock, id) => {
     xhr.send();
 }
 
-const changeBlockNone = (element) => {
-    if(element.style.display === 'block') {
-        element.style.display = 'none';
-    } else {
-        element.style.display = 'block';
-    }
-}
+const changeBlockNone = (element) => element.style.display = element.style.display === 'block' ? 'none' : 'block';
 
 // при ТЫКЕ в юсернейм добавить под него всю инфу
 const getMoreInfo = (evt) => {
