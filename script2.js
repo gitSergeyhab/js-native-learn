@@ -8,6 +8,9 @@ const url = 'https://jsonplaceholder.typicode.com/users';
 const users = document.createElement('button');
 users.textContent = 'USERS';
 document.body.append(users)
+// ... и дива куда их занружать
+const container = document.createElement('div');
+container.classList.add('container');
 
 // создание одной записи с юзернеймом
 const createUser = (user) => {
@@ -23,7 +26,6 @@ const createUser = (user) => {
     fragment.classList.add('js-target-user')
     return fragment;
 };
-
 
 // добавление в скрытый элемент   hiddenInfoBlock   параграфов из объекта по   ID
 const getInfoThisUser = (hiddenInfoBlock, id) => {
@@ -57,39 +59,56 @@ const getInfoThisUser = (hiddenInfoBlock, id) => {
         hiddenInfoBlock.append(frag); // ... и добавление 
     });
     xhr.send();
-    
 }
 
 // при ТЫКЕ в юсернейм добавить под него всю инфу
 const getMoreInfo = (evt) => {
     const targetUser = evt.target.closest('.js-target-user');
-    if(targetUser.classList.contains('js-target-user')) {
-        const id = targetUser.getAttribute('data-id');
+
+    if(targetUser) {
         const hiddenInfo = targetUser.querySelector('p');
-        hiddenInfo.style.display = 'block';
-        getInfoThisUser(hiddenInfo, id);
+        if(targetUser.classList.contains('js-already-download')) {
+            if(hiddenInfo.style.display === 'block') {
+                hiddenInfo.style.display = 'none';
+            } else {
+                hiddenInfo.style.display = 'block';
+            }
+        } else {
+            const id = targetUser.getAttribute('data-id');
+            hiddenInfo.style.display = 'block';
+            getInfoThisUser(hiddenInfo, id);
+            targetUser.classList.add('js-already-download');
+        }
     } 
 };
 
 // добавление всех юсернеймов в БОДИ
 const createFragment = (users) => {
-    const fragment = document.createElement('div');
     users.forEach(user => {
-        fragment.append(createUser(user));
+        container.append(createUser(user));
     })
-    document.body.append(fragment);
-    fragment.addEventListener('click', getMoreInfo); // и навесить событие для тыка
+    document.body.append(container);
+    container.addEventListener('click', getMoreInfo); // и навесить событие для тыка
 }
 
 // ---- G0 -----//
 
-const xhr = new XMLHttpRequest();
-xhr.open('get', url);
 users.addEventListener('click', () => {
-    xhr.addEventListener('load', () => {
-        const text = xhr.responseText;
-        const users = JSON.parse(text);
-        createFragment(users);
-    })
-    xhr.send();
+    if(container.classList.contains('js-alredy-download-usernames')) {
+        if(container.style.display === 'none') {
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+        }
+    } else {
+        const xhr = new XMLHttpRequest();
+        xhr.open('get', url);
+        xhr.addEventListener('load', () => {
+            const text = xhr.responseText;
+            const users = JSON.parse(text);
+            createFragment(users);
+        })
+        xhr.send();
+        container.classList.add('js-alredy-download-usernames');
+    };
 })
