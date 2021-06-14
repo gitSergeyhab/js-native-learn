@@ -25,7 +25,7 @@ const createUser = (user) => {
 };
 
 
-
+// добавление в скрытый элемент   hiddenInfoBlock   параграфов из объекта по   ID
 const getInfoThisUser = (hiddenInfoBlock, id) => {
     const xhr = new XMLHttpRequest();
     xhr.open('get', `${url}/${id}`);
@@ -33,7 +33,7 @@ const getInfoThisUser = (hiddenInfoBlock, id) => {
         const moreInfo = JSON.parse(xhr.responseText);
         let frag = document.createDocumentFragment();
 
-        // добавление во фраг параграфа 
+        // добавление во фраг параграфа "ключ:    значение"
         const keyValueToPar = (key, value) => `${key}:   ${value}`
         const paragAppend = (frag, key, value) => {
             const parag = document.createElement('p');
@@ -41,6 +41,8 @@ const getInfoThisUser = (hiddenInfoBlock, id) => {
             frag.append(parag);
         };
 
+        // добавление во фраг параграфОВ "ключ:    значение", 
+        //а если значение - объект - рекурссия
         const fragmentAppend = (frag, obj) => {
             for (let inf of Object.keys(obj)) {
                 if(typeof obj[inf] === 'object') {
@@ -51,13 +53,14 @@ const getInfoThisUser = (hiddenInfoBlock, id) => {
             }
         }
 
-        fragmentAppend(frag, moreInfo);
-        hiddenInfoBlock.append(frag);
+        fragmentAppend(frag, moreInfo); // наполнение фрагмента
+        hiddenInfoBlock.append(frag); // ... и добавление 
     });
     xhr.send();
     
 }
 
+// при ТЫКЕ в юсернейм добавить под него всю инфу
 const getMoreInfo = (evt) => {
     const targetUser = evt.target.closest('.js-target-user');
     if(targetUser.classList.contains('js-target-user')) {
@@ -68,14 +71,17 @@ const getMoreInfo = (evt) => {
     } 
 };
 
+// добавление всех юсернеймов в БОДИ
 const createFragment = (users) => {
     const fragment = document.createElement('div');
     users.forEach(user => {
         fragment.append(createUser(user));
     })
     document.body.append(fragment);
-    fragment.addEventListener('click', getMoreInfo);
+    fragment.addEventListener('click', getMoreInfo); // и навесить событие для тыка
 }
+
+// ---- G0 -----//
 
 const xhr = new XMLHttpRequest();
 xhr.open('get', url);
