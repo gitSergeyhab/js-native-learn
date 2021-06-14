@@ -11,6 +11,7 @@ document.body.append(users)
 // ... и дива куда их занружать
 const container = document.createElement('div');
 container.classList.add('container');
+container.style.display = 'block';
 
 // создание одной записи с юзернеймом
 const createUser = (user) => {
@@ -61,6 +62,14 @@ const getInfoThisUser = (hiddenInfoBlock, id) => {
     xhr.send();
 }
 
+const changeBlockNone = (element) => {
+    if(element.style.display === 'block') {
+        element.style.display = 'none';
+    } else {
+        element.style.display = 'block';
+    }
+}
+
 // при ТЫКЕ в юсернейм добавить под него всю инфу
 const getMoreInfo = (evt) => {
     const targetUser = evt.target.closest('.js-target-user');
@@ -68,11 +77,7 @@ const getMoreInfo = (evt) => {
     if(targetUser) {
         const hiddenInfo = targetUser.querySelector('p');
         if(targetUser.classList.contains('js-already-download')) {
-            if(hiddenInfo.style.display === 'block') {
-                hiddenInfo.style.display = 'none';
-            } else {
-                hiddenInfo.style.display = 'block';
-            }
+            changeBlockNone(hiddenInfo);
         } else {
             const id = targetUser.getAttribute('data-id');
             hiddenInfo.style.display = 'block';
@@ -95,11 +100,7 @@ const createFragment = (users) => {
 
 users.addEventListener('click', () => {
     if(container.classList.contains('js-alredy-download-usernames')) {
-        if(container.style.display === 'none') {
-            container.style.display = 'block';
-        } else {
-            container.style.display = 'none';
-        }
+        changeBlockNone(container);
     } else {
         const xhr = new XMLHttpRequest();
         xhr.open('get', url);
